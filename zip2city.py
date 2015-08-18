@@ -1,6 +1,4 @@
-import sys, os, csv, urllib, urllib2, json
-
-supported_extensions = ['.csv']
+import sys, os, csv, urllib, json
 
 def get_file_names():
     """
@@ -9,7 +7,7 @@ def get_file_names():
     """
     input_file = sys.argv[1]
     filename, extension = os.path.splitext(input_file)
-    if not extension in supported_extensions:
+    if extension != '.csv':
         sys.exit('Error, incorrect input file provided.')
     if len(sys.argv) > 2:
         output_file = sys.argv[2]+extension
