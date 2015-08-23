@@ -51,17 +51,23 @@ def get_cities_async(zipcodes):
     corresponding cities.
     Uses maps.googleapis.com
     """
-    print('Not async yet.')
-    import urllib.request
-    zip_cities = dict()
-    for idx, zipcode in enumerate(zipcodes):
+    import asyncio
+    import urllib.request, json
+    @asyncio.coroutine
+    def async_call(zipcode):
         url = 'http://maps.googleapis.com/maps/api/geocode/json?address='+zipcode+'&sensor=true'
         response = urllib.request.urlopen(url)
         string = response.read().decode('utf-8')
         data = json.loads(string)
         city = data['results'][0]['address_components'][1]['long_name']
         state = data['results'][0]['address_components'][3]['long_name']
-        zip_cities.update({idx: [zipcode, city, state]})
+        return [zipcode, city, state]
+
+    loop = asyncio.get_event_loop()
+    tasks = [asyncio.async(async_call(zipcode) ) for zipcode in  zipcodes]
+    loop.run_until_complete(asyncio.wait(tasks))
+    loop.close()
+    zip_cities = {i:tsk.result() for i,tsk in enumerate(tasks)}
     return zip_cities
 
 def make_output_csv(zips_cities, output_file):
