@@ -44,8 +44,6 @@ def get_cities(zipcodes):
         zip_cities.update({idx: [zipcode, city, state]})
     return zip_cities
 
-
-
 def make_output_csv(zips_cities, output_file):
     """
     Takes dictionary of zips with
